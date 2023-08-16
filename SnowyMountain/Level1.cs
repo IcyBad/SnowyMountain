@@ -1,32 +1,41 @@
 namespace SnowyMountain
 {
-    public partial class Form1 : Form
+    public partial class Level1 : Form
     {
-        bool goLeft, goRight, jumping, isGameOver;
 
+        bool goLeft, goRight, jumping, isGameOver;
         int jumpSpeed;
         int force;
         int score = 0;
+        int timer;
+        int timer50 = 1;
+        int timerSec = 0;
         int playerSpeed = 10;
+        int horizontalSpeed = 2;
+        int verticalSpeed = 3;
+        int enemyOneSpeed = 3;
+        int enemyTwoSpeed = 3;
 
-        int horizontalSpeed = 5;
-        int verticalSpeed = 5;
-
-        int enemyOneSpeed = 6;
-        int enemyTwoSpeed = 6;
-
-        public Form1()
+        public Level1()
         {
             InitializeComponent();
-        }
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void MainGameTimerEvent(object sender, EventArgs e)
         {
-            textScore.Text = "Score:" + score;
+            timer++;
+
+            if (timer50 < 50)
+            {
+                timer50++;
+            }
+            else
+            {
+                timer50 = 1;
+                timerSec++;
+                textScore.Text = "Snowballs:" + score;
+                textTimer.Text = "Timer: " + timerSec + "s";
+            }
 
             player.Top += jumpSpeed;
 
@@ -68,15 +77,10 @@ namespace SnowyMountain
                             {
                                 player.Left -= horizontalSpeed;
                             }
-
-
-
                         }
-
-                        // x.BringToFront();
                     }
 
-                    if ((string)x.Tag == "coin")
+                    if ((string)x.Tag == "snowball")
                     {
                         if (player.Bounds.IntersectsWith(x.Bounds) && x.Visible == true)
                         {
@@ -84,20 +88,19 @@ namespace SnowyMountain
                             score++;
                         }
                     }
+
                     if ((string)x.Tag == "enemy")
                     {
                         if (player.Bounds.IntersectsWith(x.Bounds))
                         {
                             gameTimer.Stop();
                             isGameOver = true;
-                            textScore.Text = "Score: " + score + Environment.NewLine + "you were killed in your journey!!!";
+                            textScore.Text = "Snowballs:" + score + Environment.NewLine + "you were killed in your journey!!!";
                         }
                     }
 
-
                 }
             }
-
 
             horizontalPlatform.Left -= horizontalSpeed;
 
@@ -127,23 +130,30 @@ namespace SnowyMountain
                 enemyTwoSpeed = -enemyTwoSpeed;
             }
 
-
             if (player.Top + player.Height > this.ClientSize.Height + 50)
             {
                 gameTimer.Stop();
                 isGameOver = true;
-                textScore.Text = "Score: " + score + Environment.NewLine + "You feel to your death!";
+                textScore.Text = "Snowballs:" + score + Environment.NewLine + " You feel to your death!";
             }
 
             if (player.Bounds.IntersectsWith(door.Bounds) && score == 21)
             {
                 gameTimer.Stop();
                 isGameOver = true;
-                textScore.Text = "Score: " + score + Environment.NewLine + "You beated Level 1";
+                textScore.Text = "Snowballs: " + score + Environment.NewLine + " You finished Level 1";
             }
             else
             {
-                textScore.Text = "Score: " + score + Environment.NewLine + "Collect all the coins";
+                textScore.Text = "Snowballs: " + score;
+            }
+
+            if (door.Bounds.IntersectsWith(player.Bounds) && score == 21)
+            {
+                Level2 newLevel = new Level2();
+                this.Hide();
+                gameTimer.Stop();
+                newLevel.Show();
             }
 
         }
@@ -183,10 +193,6 @@ namespace SnowyMountain
             {
                 RestartGame();
             }
-
-
-
-
         }
 
         private void RestartGame()
@@ -197,7 +203,7 @@ namespace SnowyMountain
             isGameOver = false;
             score = 0;
 
-            textScore.Text = "Score: " + score;
+            textScore.Text = "Snowballs: " + score;
 
             foreach (Control x in this.Controls)
             {
@@ -205,14 +211,11 @@ namespace SnowyMountain
                 {
                     x.Visible = true;
                 }
-
             }
 
-
-            //reser the position of player, platform and enemies
-
-            player.Left = 31;
-            player.Top = 650;
+            //reset the position of player, platform and enemies
+            player.Left = 33;
+            player.Top = 665;
 
             enemyOne.Left = 423;
             enemyTwo.Left = 423;
@@ -221,10 +224,9 @@ namespace SnowyMountain
             verticalPlatform.Top = 609;
 
             gameTimer.Start();
-
         }
 
-        private void textHighScoreTimer_Click(object sender, EventArgs e)
+        private void textScore_Click(object sender, EventArgs e)
         {
 
         }
